@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, Button, Collapse, Space, Typography } from "antd";
+import { Upload, Button, Collapse, Space, Typography, Row } from "antd";
 import FloorComponentForm from "../FloorComponentForm/FloorComponentForm";
 import { InboxOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { ImageContainer } from "./styles";
@@ -51,6 +51,7 @@ const FloorComponent = () => {
   return (
     <Collapse onChange={onChange} className="collapse-menu">
       <Panel
+        style={{ width: "100%" }}
         header={<FloorComponentForm />}
         extra={[
           <Space>

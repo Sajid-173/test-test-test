@@ -3,6 +3,7 @@ import { Button, Row, Col, Space } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
 import FloorComponent from "../components/FloorComponent/floorComponent";
+import { MainContainer } from "./styles";
 
 const Container = () => {
   const addFloor = () => {
@@ -10,7 +11,7 @@ const Container = () => {
   };
   return (
     //the entire container of the page
-    <Space direction="vertical">
+    <MainContainer direction="vertical">
       {/* Top level button for adding new floor */}
 
       <Row justify="end">
@@ -27,9 +28,9 @@ const Container = () => {
       </Row>
 
       {/* Collapse Menu container */}
-      <Row>
-        <FloorComponent />
-      </Row>
+
+      <FloorComponent />
+
       {/* container for the 2 buttons at the bottom */}
 
       <Row justify="end" gutter={24}>
@@ -44,7 +45,7 @@ const Container = () => {
           </Button>
         </Col>
       </Row>
-    </Space>
+    </MainContainer>
   );
 };
 export default Container;

@@ -11,7 +11,7 @@ const FloorComponentForm = () => {
           <Input />
         </Form.Item>
         <Form.Item label="Floor Area (L*W) :">
-          <Row align="middle" gutter={8}>
+          <Row align="middle" gutter={10}>
             <Col>
               <Input className="dimension-input" />
             </Col>

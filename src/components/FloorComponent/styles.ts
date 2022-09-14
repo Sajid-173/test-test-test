@@ -14,6 +14,9 @@ const ImageContainer = styled.div`
   & .upload-icon {
     font-size: 64px;
   }
+  & .ant-space {
+    width: 100%;
+  }
 `;
 
 export { ImageContainer };
