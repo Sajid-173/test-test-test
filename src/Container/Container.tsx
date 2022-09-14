@@ -13,7 +13,7 @@ const Container = () => {
     <Space direction="vertical">
       {/* Top level button for adding new floor */}
 
-      <Row justify="end" style={{ width: "100%" }}>
+      <Row justify="end">
         <Col>
           <Button
             shape="round"

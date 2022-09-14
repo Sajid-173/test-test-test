@@ -1,4 +1,4 @@
-import { Form, Input, Select } from "antd";
+import { Form, Input, Select, Row, Col, Typography } from "antd";
 import { FormContainer } from "./styles";
 
 const { Option } = Select;
@@ -10,26 +10,27 @@ const FloorComponentForm = () => {
         <Form.Item name="floorName" label="Floor Name :">
           <Input />
         </Form.Item>
-
         <Form.Item label="Floor Area (L*W) :">
-          <span>
-            <Input className="dimension-input" />
-          </span>
-          &nbsp;x&nbsp;
-          <span>
-            <Input className="dimension-input" />
-          </span>
-          &nbsp;=&nbsp;
-          <span>
-            <Select
-              defaultValue="sqf"
-              //onChange={handleChange}
-              className="dimension-measures"
-            >
-              <Option value="sqf">sqf</Option>
-              <Option value="sqm">sqm</Option>
-            </Select>
-          </span>
+          <Row align="middle" gutter={8}>
+            <Col>
+              <Input className="dimension-input" />
+            </Col>
+            <Typography.Text>x</Typography.Text>
+            <Col>
+              <Input className="dimension-input" />
+            </Col>
+            <Typography.Text>=</Typography.Text>
+            <Col>
+              <Select
+                defaultValue="sqf"
+                //onChange={handleChange}
+                className="dimension-measures"
+              >
+                <Option value="sqf">sqf</Option>
+                <Option value="sqm">sqm</Option>
+              </Select>
+            </Col>
+          </Row>
         </Form.Item>
       </Form>
     </FormContainer>
