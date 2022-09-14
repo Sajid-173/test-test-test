@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Upload, Button, Collapse, Space } from "antd";
+import { Upload, Button, Collapse, Space, Typography } from "antd";
 import FloorComponentForm from "../FloorComponentForm/FloorComponentForm";
 import { InboxOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { ImageContainer } from "./styles";
+
 const { Panel } = Collapse;
 
 const FloorComponent = () => {
@@ -86,13 +87,15 @@ const FloorComponent = () => {
             onPreview={handlePreview}
             listType="picture"
           >
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined className="upload-icon" />
-            </p>
-            <p className="ant-upload-text">
-              Click or drag file to this area to upload
-            </p>
-            {/* <Image src={imgurl.previewImage} width="500px" height="500px" /> */}
+            <Space direction="vertical">
+              <Typography.Text className="ant-upload-drag-icon">
+                <InboxOutlined className="upload-icon" />
+              </Typography.Text>
+              <Typography.Text className="ant-upload-text">
+                Click or drag file to this area to upload
+              </Typography.Text>
+              {/* <Image src={imgurl.previewImage} width="500px" height="500px" /> */}
+            </Space>
           </Upload>
         </ImageContainer>
       </Panel>
