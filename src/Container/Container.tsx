@@ -15,8 +15,13 @@ const Container = () => {
     <MainContainer direction="vertical">
       {/* Top level button for adding new floor */}
 
-      <Form form={form} name="dynamic_form_nest_item" autoComplete="off">
-        <Form.List name="sights">
+      <Form
+        form={form}
+        name="dynamic_form_nest_item"
+        autoComplete="off"
+        initialValues={{ fields: [""] }}
+      >
+        <Form.List name="fields">
           {(fields, { add, remove }) => (
             <>
               <Row justify="end">
@@ -24,18 +29,13 @@ const Container = () => {
                   shape="round"
                   type="link"
                   icon={<PlusCircleOutlined />}
-                  onClick={() => {
-                    add();
-                    console.log("sss");
-                  }}
+                  onClick={() => add()}
                 >
-                  Add new Floorplane
+                  Add new Floor plan
                 </Button>
               </Row>
 
-              <FloorComponent />
-
-              {fields.map((field) => (
+              {fields.reverse().map((field) => (
                 <Form.Item {...field}>
                   <FloorComponent />
                 </Form.Item>

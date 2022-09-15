@@ -27,7 +27,6 @@ const BottomButtonContainer = styled(Space)`
   margin: 0 auto;
   border-radius: 9px;
   width: 800px;
-  padding: 16px;
 `;
 
 const FormContainer = styled(Space)`

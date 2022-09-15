@@ -47,7 +47,8 @@ const FloorComponent = () => {
     <Collapse
       onChange={onPanelChange}
       className="collapse-menu"
-      defaultActiveKey={["1"]}
+      //defaultActiveKey={["1"]}
+      // collapsible
     >
       <Panel
         style={{ width: "100%" }}
@@ -57,7 +58,7 @@ const FloorComponent = () => {
               <Form.Item name="floorName" label="Floor Name :">
                 <Input />
               </Form.Item>
-              <Form.Item label="Floor Area (L*W) :">
+              <Form.Item name="floorName" label="Floor Area (L*W) :">
                 <Row align="middle" gutter={10}>
                   <Col>
                     <Input className="dimension-input" />
@@ -73,8 +74,18 @@ const FloorComponent = () => {
                       //onChange={handleChange}
                       className="dimension-measures"
                     >
-                      <Option value="sqf">sqf</Option>
-                      <Option value="sqm">sqm</Option>
+                      <Option value="sqf">
+                        <b>ft</b>
+                        <sup>
+                          <b>2</b>
+                        </sup>
+                      </Option>
+                      <Option value="sqm">
+                        <b>m</b>
+                        <sup>
+                          <b>2</b>
+                        </sup>
+                      </Option>
                     </Select>
                   </Col>
                 </Row>
@@ -125,7 +136,10 @@ const FloorComponent = () => {
               isImageUrl={() => true}
               listType="picture"
             >
-              <Space direction="vertical">
+              <Space
+                direction="vertical"
+                style={{ height: "100%", width: "100%" }}
+              >
                 <Typography.Text className="ant-upload-drag-icon">
                   <InboxOutlined className="upload-icon" />
                 </Typography.Text>
@@ -149,9 +163,9 @@ const FloorComponent = () => {
               <Col>
                 {/* Buttons with no backgrounds to be put here later? */}
                 <Space size={20}>
-                  <Typography.Text>Upload</Typography.Text>
+                  <Button type="link">Upload</Button>
                   <Typography.Text>|</Typography.Text>
-                  <Typography.Text>Rotate</Typography.Text>
+                  <Button type="link">Rotate</Button>
                 </Space>
               </Col>
             </Space>
