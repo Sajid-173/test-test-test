@@ -8,7 +8,6 @@ const ImageContainer = styled(Space)`
   margin: 24px auto;
   border: 2px dashed black;
   border-radius: 9px;
-  padding: 24px;
 
   height: 600px;
   width: 800px;
@@ -17,6 +16,10 @@ const ImageContainer = styled(Space)`
   }
   & .ant-space {
     width: 100%;
+  }
+  & .ant-upload-select-text {
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -33,10 +36,18 @@ const FormContainer = styled(Space)`
   width: 100%;
   & .dimension-input {
     width: 50px;
+    border-radius: 4px;
   }
 
   & .dimension-measures {
     width: 70px;
+  }
+  & .my-select-container .ant-select .ant-select-selector {
+    border-radius: 4px;
+  }
+
+  & .floor-name {
+    border-radius: 4px;
   }
 `;
 

@@ -47,6 +47,7 @@ const FloorComponent = () => {
     <Collapse
       onChange={onPanelChange}
       className="collapse-menu"
+
       //defaultActiveKey={["1"]}
       // collapsible
     >
@@ -56,7 +57,7 @@ const FloorComponent = () => {
           <FormContainer>
             <Form name="customized_form_controls" layout="inline">
               <Form.Item name="floorName" label="Floor Name :">
-                <Input />
+                <Input className="floor-name" />
               </Form.Item>
               <Form.Item name="floorName" label="Floor Area (L*W) :">
                 <Row align="middle" gutter={10}>
@@ -128,25 +129,27 @@ const FloorComponent = () => {
         {url === null && (
           <ImageContainer>
             <Upload
+              className="img-upload"
               beforeUpload={(file) => {
                 return false;
               }}
               onChange={handleImageChange}
-              multiple={false}
-              isImageUrl={() => true}
-              listType="picture"
             >
-              <Space
-                direction="vertical"
-                style={{ height: "100%", width: "100%" }}
+              <Row
+                align="middle"
+                style={{
+                  height: "100%",
+                }}
               >
-                <Typography.Text className="ant-upload-drag-icon">
-                  <InboxOutlined className="upload-icon" />
-                </Typography.Text>
-                <Typography.Text className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </Typography.Text>
-              </Space>
+                <Space direction="vertical">
+                  <Typography.Text className="ant-upload-drag-icon">
+                    <InboxOutlined className="upload-icon" />
+                  </Typography.Text>
+                  <Typography.Text className="ant-upload-text">
+                    Click or drag file to this area to upload
+                  </Typography.Text>
+                </Space>
+              </Row>
             </Upload>
           </ImageContainer>
         )}

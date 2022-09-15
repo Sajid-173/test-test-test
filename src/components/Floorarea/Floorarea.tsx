@@ -9,7 +9,7 @@ const FloorArea = () => {
     <BottomFormContainer>
       <FormContainer layout="inline">
         <FormItem>
-          <Input className="form-item-width" />
+          <Input className="form-item-width" placeholder="Area Name" />
         </FormItem>
         <FormItem>
           <Select
