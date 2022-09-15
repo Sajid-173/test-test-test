@@ -8,6 +8,8 @@ const BottomFormContainer = styled(Space)`
   & .form-item-width {
     width: 250px;
   }
+  display: flex;
+  justify-content: center;
 `;
 
 const FormContainer = styled(Form)`

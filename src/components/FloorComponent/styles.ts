@@ -14,12 +14,21 @@ const ImageContainer = styled(Space)`
   & .upload-icon {
     font-size: 64px;
   }
-  & .ant-space {
+
+  & .ant-space-item {
     width: 100%;
+    height: 100%;
+    display: grid;
+    align-items: stretch;
   }
+
   & .ant-upload-select-text {
     width: 100%;
     height: 100%;
+  }
+
+  & .ant-upload-drag-icon {
+    align-self: flex-end;
   }
 `;
 
@@ -51,4 +60,14 @@ const FormContainer = styled(Space)`
   }
 `;
 
-export { ImageContainer, BottomButtonContainer, FormContainer };
+const UploadInnerContainer = styled(Space)`
+  width: 100%;
+  height: 100%;
+`;
+
+export {
+  ImageContainer,
+  BottomButtonContainer,
+  FormContainer,
+  UploadInnerContainer,
+};

@@ -15,7 +15,12 @@ import {
 } from "antd";
 
 import { InboxOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import { ImageContainer, BottomButtonContainer, FormContainer } from "./styles";
+import {
+  ImageContainer,
+  BottomButtonContainer,
+  FormContainer,
+  UploadInnerContainer,
+} from "./styles";
 import FloorArea from "../Floorarea/Floorarea";
 
 const { Panel } = Collapse;
@@ -135,13 +140,8 @@ const FloorComponent = () => {
               }}
               onChange={handleImageChange}
             >
-              <Row
-                align="middle"
-                style={{
-                  height: "100%",
-                }}
-              >
-                <Space direction="vertical">
+              <UploadInnerContainer align="center" direction="vertical">
+                <Space direction="vertical" align="center">
                   <Typography.Text className="ant-upload-drag-icon">
                     <InboxOutlined className="upload-icon" />
                   </Typography.Text>
@@ -149,7 +149,7 @@ const FloorComponent = () => {
                     Click or drag file to this area to upload
                   </Typography.Text>
                 </Space>
-              </Row>
+              </UploadInnerContainer>
             </Upload>
           </ImageContainer>
         )}
