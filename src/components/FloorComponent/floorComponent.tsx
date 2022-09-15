@@ -1,66 +1,103 @@
 import React, { useState } from "react";
-import { Upload, Button, Collapse, Space, Typography, Row } from "antd";
-import FloorComponentForm from "../FloorComponentForm/FloorComponentForm";
+import {
+  Upload,
+  Button,
+  Collapse,
+  Space,
+  Typography,
+  Row,
+  Image,
+  Col,
+  Popconfirm,
+  Form,
+  Input,
+  Select,
+} from "antd";
+
 import { InboxOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import { ImageContainer } from "./styles";
+import { ImageContainer, BottomButtonContainer, FormContainer } from "./styles";
+import FloorArea from "../Floorarea/Floorarea";
 
 const { Panel } = Collapse;
+const { Option } = Select;
 
 const FloorComponent = () => {
-  const onChange = (key: string | string[]) => {
-    console.log(key);
-  };
-  const [state, setState]: any = useState({
-    fileList: [
-      {
-        thumbUrl:
-          "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-      },
-    ],
-  });
+  const [url, setUrl] = useState<any>(null);
 
-  const [imgurl, setImgurl] = useState({
-    previewVisible: false,
-    previewImage: "",
-  });
-
-  const handlePreview = (file: any) => {
-    console.log(file);
-    setImgurl({
-      previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
-    });
+  const onPanelChange = (key: string | string[]) => {
+    // console.log(key);
   };
 
-  const handleChange = (info: any) => {
-    let fileList = [...info.fileList];
-    //console.log(fileList);
-    // 1. Limit the number of uploaded files
-    // Only to show two recent uploaded files, and old ones will be replaced by the new
-    fileList = fileList.slice(-1);
-    setImgurl({
-      previewImage: info.file.url || info.file.thumbUrl,
-      previewVisible: true,
+  const getBASE64 = (img: any, callback: any) => {
+    console.log(img);
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      setUrl(reader.result);
+      console.log(reader.result);
     });
-    console.log("this is img url" + imgurl.previewImage);
-    console.log(imgurl.previewImage);
-
-    setState({ fileList: fileList });
+    reader.readAsDataURL(img);
+  };
+  const handleImageChange = (info: any) => {
+    getBASE64(info.fileList[0].originFileObj, (urlImage: any) => {
+      setUrl(urlImage);
+    });
   };
 
   return (
-    <Collapse onChange={onChange} className="collapse-menu">
+    <Collapse
+      onChange={onPanelChange}
+      className="collapse-menu"
+      defaultActiveKey={["1"]}
+    >
       <Panel
         style={{ width: "100%" }}
-        header={<FloorComponentForm />}
+        header={
+          <FormContainer>
+            <Form name="customized_form_controls" layout="inline">
+              <Form.Item name="floorName" label="Floor Name :">
+                <Input />
+              </Form.Item>
+              <Form.Item label="Floor Area (L*W) :">
+                <Row align="middle" gutter={10}>
+                  <Col>
+                    <Input className="dimension-input" />
+                  </Col>
+                  <Typography.Text>x</Typography.Text>
+                  <Col>
+                    <Input className="dimension-input" />
+                  </Col>
+                  <Typography.Text>=</Typography.Text>
+                  <Col>
+                    <Select
+                      defaultValue="sqf"
+                      //onChange={handleChange}
+                      className="dimension-measures"
+                    >
+                      <Option value="sqf">sqf</Option>
+                      <Option value="sqm">sqm</Option>
+                    </Select>
+                  </Col>
+                </Row>
+              </Form.Item>
+            </Form>
+          </FormContainer>
+        }
         extra={[
           <Space>
-            <Button
-              type="primary"
-              shape="circle"
-              ghost
-              icon={<DeleteOutlined />}
-            />
+            <Popconfirm
+              placement="top"
+              title="Are you sure you want to Delete?"
+              //onConfirm={confirm}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button
+                type="primary"
+                shape="circle"
+                ghost
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
 
             <Button
               type="primary"
@@ -77,28 +114,50 @@ const FloorComponent = () => {
         key="1"
       >
         {/* Image container where the image is shown */}
-        <ImageContainer>
-          <Upload
-            beforeUpload={(file) => {
-              return false;
-            }}
-            onChange={handleChange}
-            multiple={false}
-            isImageUrl={() => true}
-            onPreview={handlePreview}
-            listType="picture"
-          >
-            <Space direction="vertical">
-              <Typography.Text className="ant-upload-drag-icon">
-                <InboxOutlined className="upload-icon" />
-              </Typography.Text>
-              <Typography.Text className="ant-upload-text">
-                Click or drag file to this area to upload
-              </Typography.Text>
-              {/* <Image src={imgurl.previewImage} width="500px" height="500px" /> */}
+        {url === null && (
+          <ImageContainer>
+            <Upload
+              beforeUpload={(file) => {
+                return false;
+              }}
+              onChange={handleImageChange}
+              multiple={false}
+              isImageUrl={() => true}
+              listType="picture"
+            >
+              <Space direction="vertical">
+                <Typography.Text className="ant-upload-drag-icon">
+                  <InboxOutlined className="upload-icon" />
+                </Typography.Text>
+                <Typography.Text className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </Typography.Text>
+              </Space>
+            </Upload>
+          </ImageContainer>
+        )}
+
+        {url !== null && (
+          <Image width={800} height={600} src={url} preview={false} />
+        )}
+        <BottomButtonContainer>
+          <Row justify="end" gutter={24}>
+            <Space size={20}>
+              <Col>
+                <Typography.Text>Image Text</Typography.Text>
+              </Col>
+              <Col>
+                {/* Buttons with no backgrounds to be put here later? */}
+                <Space size={20}>
+                  <Typography.Text>Upload</Typography.Text>
+                  <Typography.Text>|</Typography.Text>
+                  <Typography.Text>Rotate</Typography.Text>
+                </Space>
+              </Col>
             </Space>
-          </Upload>
-        </ImageContainer>
+          </Row>
+        </BottomButtonContainer>
+        <FloorArea />
       </Panel>
     </Collapse>
   );

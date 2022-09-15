@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Space } from "antd";
+import { Button, Row, Col, Space, Popconfirm, Form } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
 import FloorComponent from "../components/FloorComponent/floorComponent";
@@ -9,35 +9,57 @@ const Container = () => {
   const addFloor = () => {
     //adds new floors to the page
   };
+  const [form] = Form.useForm();
   return (
     //the entire container of the page
     <MainContainer direction="vertical">
       {/* Top level button for adding new floor */}
 
-      <Row justify="end">
-        <Col>
-          <Button
-            shape="round"
-            type="primary"
-            icon={<PlusCircleOutlined />}
-            onClick={addFloor}
-          >
-            Add new Floorplan
-          </Button>
-        </Col>
-      </Row>
+      <Form form={form} name="dynamic_form_nest_item" autoComplete="off">
+        <Form.List name="sights">
+          {(fields, { add, remove }) => (
+            <>
+              <Row justify="end">
+                <Button
+                  shape="round"
+                  type="link"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    add();
+                    console.log("sss");
+                  }}
+                >
+                  Add new Floorplane
+                </Button>
+              </Row>
 
-      {/* Collapse Menu container */}
+              <FloorComponent />
 
-      <FloorComponent />
+              {fields.map((field) => (
+                <Form.Item {...field}>
+                  <FloorComponent />
+                </Form.Item>
+              ))}
+            </>
+          )}
+        </Form.List>
+      </Form>
 
       {/* container for the 2 buttons at the bottom */}
 
       <Row justify="end" gutter={24}>
         <Col>
-          <Button shape="round" type="primary">
-            Cancel
-          </Button>
+          <Popconfirm
+            placement="top"
+            title="Are you sure you want to cancel?"
+            //onConfirm={confirm}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button shape="round" type="primary">
+              Cancel
+            </Button>
+          </Popconfirm>
         </Col>
         <Col>
           <Button shape="round" disabled type="primary">

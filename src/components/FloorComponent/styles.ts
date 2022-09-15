@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { Space } from "antd";
 
-const ImageContainer = styled.div`
+const ImageContainer = styled(Space)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,4 +20,25 @@ const ImageContainer = styled.div`
   }
 `;
 
-export { ImageContainer };
+const BottomButtonContainer = styled(Space)`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 auto;
+  border-radius: 9px;
+  width: 800px;
+  padding: 16px;
+`;
+
+const FormContainer = styled(Space)`
+  width: 100%;
+  & .dimension-input {
+    width: 50px;
+  }
+
+  & .dimension-measures {
+    width: 70px;
+  }
+`;
+
+export { ImageContainer, BottomButtonContainer, FormContainer };
