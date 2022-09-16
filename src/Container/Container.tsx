@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Space, Popconfirm, Form } from "antd";
+import { Button, Row, Col, Popconfirm, Form } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
 import FloorComponent from "../components/FloorComponent/floorComponent";
@@ -31,7 +31,7 @@ const Container = () => {
                   icon={<PlusCircleOutlined />}
                   onClick={() => add()}
                 >
-                  Add new Floor plan
+                  Add new floor plan
                 </Button>
               </Row>
 

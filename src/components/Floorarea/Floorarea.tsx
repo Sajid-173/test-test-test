@@ -4,7 +4,8 @@ import { DeleteOutlined } from "@ant-design/icons";
 import FormItem from "antd/es/form/FormItem";
 import { BottomFormContainer, FormContainer } from "./styles";
 const { Option } = Select;
-const FloorArea = () => {
+const FloorArea = (props: any) => {
+  const { data } = props;
   return (
     <BottomFormContainer>
       <FormContainer layout="inline">
@@ -34,7 +35,7 @@ const FloorArea = () => {
           </Select>
         </FormItem>
         <Typography.Text className="form-item-width">
-          Area Calculations
+          {data.width}*{data.height}px
         </Typography.Text>
         <Popconfirm
           placement="top"

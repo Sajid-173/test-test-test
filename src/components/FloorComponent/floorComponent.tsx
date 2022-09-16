@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   Upload,
   Button,
@@ -21,13 +22,19 @@ import {
   FormContainer,
   UploadInnerContainer,
 } from "./styles";
-import FloorArea from "../Floorarea/Floorarea";
+import DrawAnnotations from "../DrawAnnotations/drawAnnotations";
+import FloorArea from "../FloorArea/floorArea";
 
 const { Panel } = Collapse;
 const { Option } = Select;
 
 const FloorComponent = () => {
   const [url, setUrl] = useState<any>(null);
+  const [localData, setLocalData] = useState([]);
+  const data = (d: any) => {
+    setLocalData(d);
+    // console.log("sajid", d);
+  };
 
   const onPanelChange = (key: string | string[]) => {
     // console.log(key);
@@ -64,7 +71,7 @@ const FloorComponent = () => {
               <Form.Item name="floorName" label="Floor Name :">
                 <Input className="floor-name" />
               </Form.Item>
-              <Form.Item name="floorName" label="Floor Area (L*W) :">
+              <Form.Item name="floorArea" label="Floor Area (L*W) :">
                 <Row align="middle" gutter={10}>
                   <Col>
                     <Input className="dimension-input" />
@@ -133,13 +140,7 @@ const FloorComponent = () => {
         {/* Image container where the image is shown */}
         {url === null && (
           <ImageContainer>
-            <Upload
-              className="img-upload"
-              beforeUpload={(file) => {
-                return false;
-              }}
-              onChange={handleImageChange}
-            >
+            <Upload className="img-upload" onChange={handleImageChange}>
               <UploadInnerContainer align="center" direction="vertical">
                 <Space direction="vertical" align="center">
                   <Typography.Text className="ant-upload-drag-icon">
@@ -155,7 +156,10 @@ const FloorComponent = () => {
         )}
 
         {url !== null && (
-          <Image width={800} height={600} src={url} preview={false} />
+          //<Image width={800} height={600} src={url} preview={false} />
+          <Space>
+            <DrawAnnotations data={(d: any) => data(d)} Imgurl={url} />
+          </Space>
         )}
         <BottomButtonContainer>
           <Row justify="end" gutter={24}>
@@ -174,7 +178,12 @@ const FloorComponent = () => {
             </Space>
           </Row>
         </BottomButtonContainer>
-        <FloorArea />
+
+        {localData?.map((item) => (
+          <>
+            <FloorArea data={item} />
+          </>
+        ))}
       </Panel>
     </Collapse>
   );
