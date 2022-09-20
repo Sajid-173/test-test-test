@@ -19,7 +19,7 @@ import { InboxOutlined, DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import {
   ImageContainer,
   BottomButtonContainer,
-  FormContainer,
+  FormRow,
   UploadInnerContainer,
 } from "./styles";
 import DrawAnnotations from "../DrawAnnotations/drawAnnotations";
@@ -59,52 +59,50 @@ const FloorComponent = () => {
     <Collapse
       onChange={onPanelChange}
       className="collapse-menu"
-
+      collapsible="header"
       //defaultActiveKey={["1"]}
       // collapsible
     >
       <Panel
         style={{ width: "100%" }}
         header={
-          <FormContainer>
-            <Form name="customized_form_controls" layout="inline">
+          <FormRow gutter={10}>
+            <Col>
               <Form.Item name="floorName" label="Floor Name :">
                 <Input className="floor-name" />
               </Form.Item>
+            </Col>
+            <Col style={{ display: "flex", gap: "12px" }}>
               <Form.Item name="floorArea" label="Floor Area (L*W) :">
-                <Row align="middle" gutter={10}>
-                  <Col>
-                    <Input className="dimension-input" />
-                  </Col>
-                  <Typography.Text>x</Typography.Text>
-                  <Col>
-                    <Input className="dimension-input" />
-                  </Col>
-                  <Typography.Text>=</Typography.Text>
-                  <Col>
-                    <Select
-                      defaultValue="sqf"
-                      //onChange={handleChange}
-                      className="dimension-measures"
-                    >
-                      <Option value="sqf">
-                        <b>ft</b>
-                        <sup>
-                          <b>2</b>
-                        </sup>
-                      </Option>
-                      <Option value="sqm">
-                        <b>m</b>
-                        <sup>
-                          <b>2</b>
-                        </sup>
-                      </Option>
-                    </Select>
-                  </Col>
-                </Row>
+                <Input className="dimension-input" />
               </Form.Item>
-            </Form>
-          </FormContainer>
+              <Typography.Text>x</Typography.Text>
+              <Form.Item>
+                <Input className="dimension-input" />
+              </Form.Item>
+              <Typography.Text>=</Typography.Text>
+              <Form.Item>
+                <Select
+                  defaultValue="sqf"
+                  //onChange={handleChange}
+                  className="dimension-measures"
+                >
+                  <Option value="sqf">
+                    <b>ft</b>
+                    <sup>
+                      <b>2</b>
+                    </sup>
+                  </Option>
+                  <Option value="sqm">
+                    <b>m</b>
+                    <sup>
+                      <b>2</b>
+                    </sup>
+                  </Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </FormRow>
         }
         extra={[
           <Space>
@@ -140,13 +138,13 @@ const FloorComponent = () => {
         {/* Image container where the image is shown */}
         {url === null && (
           <ImageContainer>
-            <Upload className="img-upload" onChange={handleImageChange}>
+            <Upload onChange={handleImageChange}>
               <UploadInnerContainer align="center" direction="vertical">
                 <Space direction="vertical" align="center">
-                  <Typography.Text className="ant-upload-drag-icon">
-                    <InboxOutlined className="upload-icon" />
-                  </Typography.Text>
-                  <Typography.Text className="ant-upload-text">
+                  <Space direction="vertical" align="end">
+                    <InboxOutlined />
+                  </Space>
+                  <Typography.Text>
                     Click or drag file to this area to upload
                   </Typography.Text>
                 </Space>

@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useImage from "use-image";
-import {
-  Stage,
-  Layer,
-  Rect,
-  Image,
-  Text,
-  Group,
-  Label,
-  Tag,
-} from "react-konva";
+import { Stage, Layer, Rect, Image, Text, Label, Tag } from "react-konva";
 
 const DrawAnnotations = (props: any) => {
   const { Imgurl } = props;
@@ -78,59 +69,59 @@ const DrawAnnotations = (props: any) => {
         <Layer>
           <Image image={image} width={800} height={600} />
 
-          {annotationsToDraw.map((value) => {
-            return (
-              <>
-                <Rect
-                  x={value.x}
-                  y={value.y}
-                  width={value.width}
-                  height={value.height}
-                  fill="transparent"
-                  stroke="red"
-                />
-                <Text
-                  x={
-                    value.x > 0
-                      ? value.x + value.width / 2 - 25
-                      : value.x + value.width / 2 - 25
-                  }
-                  y={
-                    value.y > 0
-                      ? value.y + value.height / 2 - 20
-                      : value.y + value.height
-                  }
-                  Text={`Area:  ${value.key} \n Width: ${Math.abs(
-                    value.width
-                  )} \n Height: ${Math.abs(value.height)}`}
-                  fill="black"
-                />
-
-                <Label
-                  x={value.x}
-                  y={value.y + value.height / 2 - 25}
-                  fill="black"
-                  rotation={90}
-                >
-                  <Tag fill="red" />
-                  <Text
-                    padding={5}
-                    fill="white"
-                    text={`ft : ${Math.trunc(value.height)}`}
+          {annotationsToDraw &&
+            annotationsToDraw.map((value) => {
+              return (
+                <>
+                  <Rect
+                    x={value.x}
+                    y={value.y}
+                    width={value.width}
+                    height={value.height}
+                    fill="transparent"
+                    stroke="red"
+                    draggable
                   />
-                </Label>
-
-                <Label x={value.x + value.width - 30} y={value.y - 20}>
-                  <Tag fill="red" />
                   <Text
-                    padding={5}
-                    fill="white"
-                    text={`ft : ${Math.trunc(value.width)}`}
+                    x={
+                      value.x > 0
+                        ? value.x + value.width / 2 - 25
+                        : value.x + value.width / 2 - 25
+                    }
+                    y={
+                      value.y > 0
+                        ? value.y + value.height / 2 - 20
+                        : value.y + value.height
+                    }
+                    Text={`Area:  ${value.key} `}
+                    fill="black"
                   />
-                </Label>
-              </>
-            );
-          })}
+
+                  <Label
+                    x={value.x}
+                    y={value.y + value.height / 2 - 25}
+                    fill="black"
+                    rotation={90}
+                  >
+                    <Tag fill="red" />
+                    <Text
+                      padding={5}
+                      fill="white"
+                      text={`ft : ${Math.trunc(value.height)}`}
+                    />
+                  </Label>
+
+                  <Label x={value.x + value.width - 30} y={value.y - 20}>
+                    <Tag fill="red" />
+                    <Text
+                      padding={5}
+                      fill="white"
+                      text={`ft : ${Math.trunc(value.width)}`}
+                    />
+                  </Label>
+                </>
+              );
+            })}
         </Layer>
       </Stage>
     </>

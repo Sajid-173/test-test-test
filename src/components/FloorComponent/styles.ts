@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Space } from "antd";
+import { Space, Row } from "antd";
 
 const ImageContainer = styled(Space)`
   display: flex;
@@ -11,8 +11,9 @@ const ImageContainer = styled(Space)`
 
   height: 600px;
   width: 800px;
-  & .upload-icon {
+  & .anticon svg {
     font-size: 64px;
+    margin-top: 220px;
   }
 
   & .ant-space-item {
@@ -41,15 +42,17 @@ const BottomButtonContainer = styled(Space)`
   width: 800px;
 `;
 
-const FormContainer = styled(Space)`
-  width: 100%;
+const FormRow = styled(Row)`
+  & .ant-col {
+    height: 34px;
+  }
+
   & .dimension-input {
-    width: 50px;
     border-radius: 4px;
   }
 
   & .dimension-measures {
-    width: 70px;
+    border-radius: 4px;
   }
   & .my-select-container .ant-select .ant-select-selector {
     border-radius: 4px;
@@ -65,9 +68,4 @@ const UploadInnerContainer = styled(Space)`
   height: 100%;
 `;
 
-export {
-  ImageContainer,
-  BottomButtonContainer,
-  FormContainer,
-  UploadInnerContainer,
-};
+export { ImageContainer, BottomButtonContainer, FormRow, UploadInnerContainer };
