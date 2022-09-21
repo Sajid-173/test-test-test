@@ -1,17 +1,35 @@
 import React, { useState, useEffect } from "react";
 import useImage from "use-image";
 import { Stage, Layer, Rect, Image, Text, Label, Tag } from "react-konva";
+import MainArea from "../MainArea/MainArea";
+import { getActiveElement } from "@testing-library/user-event/dist/utils";
 
 const DrawAnnotations = (props: any) => {
   const { Imgurl } = props;
   const [annotations, setAnnotations]: any = useState([]);
   const [newAnnotation, setNewAnnotation]: any = useState([]);
   const [image] = useImage(Imgurl);
+  const [label, setlabel] = useState(true);
+
+  const [rectangles, setRectangles] = React.useState(annotations);
+  const [selectedId, selectShape] = React.useState(null);
+  const [active, setActive] = useState(true);
+
+  const checkDeselect = (e: any) => {
+    // deselect when clicked on empty area
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      selectShape(null);
+    }
+  };
 
   const handleMouseDown = (event: any) => {
-    if (newAnnotation.length === 0) {
-      const { x, y } = event.target.getStage().getPointerPosition();
-      setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
+    if (active === true) {
+      if (newAnnotation.length === 0) {
+        setlabel(false);
+        const { x, y } = event.target.getStage().getPointerPosition();
+        setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
+      }
     }
   };
 
@@ -31,11 +49,12 @@ const DrawAnnotations = (props: any) => {
       annotations.push(annotationToAdd);
       setNewAnnotation([]);
       setAnnotations(annotations);
+      setActive(false);
     }
   };
-  useEffect(() => {
-    if (annotations) props.data([...annotations, ...newAnnotation]);
-  }, [annotations, newAnnotation]);
+  // useEffect(() => {
+  //   if (annotations) props.data([...annotations, ...newAnnotation]);
+  // }, [annotations, newAnnotation]);
 
   const handleMouseMove = (event: any) => {
     if (newAnnotation.length === 1) {
@@ -63,63 +82,42 @@ const DrawAnnotations = (props: any) => {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        width={800}
-        height={600}
+        width={820}
+        height={620}
       >
         <Layer>
           <Image image={image} width={800} height={600} />
 
+          {label === true && (
+            <Label x={300} y={240}>
+              <Tag fill="black" />
+              <Text
+                padding={12}
+                align="center"
+                fontSize={24}
+                width={200}
+                fill="white"
+                text="Click and drag to select the coverage area"
+                wrap="true"
+              />
+            </Label>
+          )}
           {annotationsToDraw &&
-            annotationsToDraw.map((value) => {
+            annotationsToDraw.map((rect, i) => {
               return (
-                <>
-                  <Rect
-                    x={value.x}
-                    y={value.y}
-                    width={value.width}
-                    height={value.height}
-                    fill="transparent"
-                    stroke="red"
-                    draggable
-                  />
-                  <Text
-                    x={
-                      value.x > 0
-                        ? value.x + value.width / 2 - 25
-                        : value.x + value.width / 2 - 25
-                    }
-                    y={
-                      value.y > 0
-                        ? value.y + value.height / 2 - 20
-                        : value.y + value.height
-                    }
-                    Text={`Area:  ${value.key} `}
-                    fill="black"
-                  />
-
-                  <Label
-                    x={value.x}
-                    y={value.y + value.height / 2 - 25}
-                    fill="black"
-                    rotation={90}
-                  >
-                    <Tag fill="red" />
-                    <Text
-                      padding={5}
-                      fill="white"
-                      text={`ft : ${Math.trunc(value.height)}`}
-                    />
-                  </Label>
-
-                  <Label x={value.x + value.width - 30} y={value.y - 20}>
-                    <Tag fill="red" />
-                    <Text
-                      padding={5}
-                      fill="white"
-                      text={`ft : ${Math.trunc(value.width)}`}
-                    />
-                  </Label>
-                </>
+                <MainArea
+                  key={i}
+                  shapeProps={rect}
+                  isSelected={rect.id === selectedId}
+                  onSelect={() => {
+                    selectShape(rect.id);
+                  }}
+                  onChange={(newAttrs: any) => {
+                    const rects = rectangles.slice();
+                    rects[i] = newAttrs;
+                    setRectangles(rects);
+                  }}
+                />
               );
             })}
         </Layer>
