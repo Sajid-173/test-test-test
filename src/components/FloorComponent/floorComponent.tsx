@@ -31,6 +31,8 @@ const { Option } = Select;
 const FloorComponent = () => {
   const [url, setUrl] = useState<any>(null);
   const [localData, setLocalData] = useState([]);
+  const [imgname, setImgname] = useState();
+  const [enabled, setenabled] = useState("disabled");
   const data = (d: any) => {
     setLocalData(d);
     // console.log("sajid", d);
@@ -42,10 +44,11 @@ const FloorComponent = () => {
 
   const getBASE64 = (img: any, callback: any) => {
     console.log(img);
+    setImgname(img.name);
     const reader = new FileReader();
     reader.addEventListener("load", () => {
       setUrl(reader.result);
-      console.log(reader.result);
+      // console.log(reader.result);
     });
     reader.readAsDataURL(img);
   };
@@ -69,16 +72,16 @@ const FloorComponent = () => {
           <FormRow gutter={10}>
             <Col>
               <Form.Item name="floorName" label="Floor Name :">
-                <Input className="floor-name" />
+                <Input minLength={1} maxLength={30} className="floor-name" />
               </Form.Item>
             </Col>
             <Col style={{ display: "flex", gap: "12px" }}>
               <Form.Item name="floorArea" label="Floor Area (L*W) :">
-                <Input className="dimension-input" />
+                <Input type="number" className="dimension-input" />
               </Form.Item>
               <Typography.Text>x</Typography.Text>
               <Form.Item>
-                <Input className="dimension-input" />
+                <Input type="number" className="dimension-input" />
               </Form.Item>
               <Typography.Text>=</Typography.Text>
               <Form.Item>
@@ -128,7 +131,7 @@ const FloorComponent = () => {
               icon={<SyncOutlined />}
             />
 
-            <Button shape="round" type="primary" disabled>
+            <Button shape="round" type="primary">
               Submit
             </Button>
           </Space>,
@@ -163,7 +166,7 @@ const FloorComponent = () => {
           <Row justify="end" gutter={24}>
             <Space size={20}>
               <Col>
-                <Typography.Text>Image Text</Typography.Text>
+                <Typography.Text>{imgname}</Typography.Text>
               </Col>
               <Col>
                 {/* Buttons with no backgrounds to be put here later? */}
@@ -176,12 +179,12 @@ const FloorComponent = () => {
             </Space>
           </Row>
         </BottomButtonContainer>
-
+        {/* 
         {localData?.map((item) => (
           <>
             <FloorArea data={item} />
           </>
-        ))}
+        ))} */}
       </Panel>
     </Collapse>
   );
