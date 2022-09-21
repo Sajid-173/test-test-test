@@ -75,6 +75,7 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
   return (
     <React.Fragment>
       <Rect
+        stroke="red"
         fill="rgba(245, 39, 39, 0.34)"
         onClick={onSelect}
         onTap={onSelect}
@@ -117,8 +118,8 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
             const isOut =
               box.x < 0 ||
               box.y < 0 ||
-              box.x + box.width > 820 ||
-              box.y + box.height > 620;
+              box.x + box.width > 800 ||
+              box.y + box.height > 600;
 
             // if new bounding box is out of visible viewport, let's just skip transforming
             // this logic can be improved by still allow some transforming if we have small available space
@@ -132,25 +133,26 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
               .nodes()
               .map((node: any) => node.getClientRect());
             const box = getTotalBox(boxes);
+
             trRef.current.nodes().forEach((shape: any) => {
               const absPos = shape.getAbsolutePosition();
               // where are shapes inside bounding box of all shapes?
               const offsetX = box.x - absPos.x;
               const offsetY = box.y - absPos.y;
 
-              // we total box goes outside of viewport, we need to move absolute position of shape
+              // when total box goes outside of viewport, we need to move absolute position of shape
               const newAbsPos = { ...absPos };
               if (box.x < 0) {
-                newAbsPos.x = -offsetX;
+                newAbsPos.x = -offsetX + 2;
               }
               if (box.y < 0) {
-                newAbsPos.y = -offsetY;
+                newAbsPos.y = -offsetY + 2;
               }
-              if (box.x + box.width > 820) {
-                newAbsPos.x = 820 - box.width - offsetX;
+              if (box.x + box.width > 800) {
+                newAbsPos.x = 800 - box.width - offsetX - 2;
               }
-              if (box.y + box.height > 620) {
-                newAbsPos.y = 620 - box.height - offsetY;
+              if (box.y + box.height > 600) {
+                newAbsPos.y = 600 - box.height - offsetY - 2;
               }
               shape.setAbsolutePosition(newAbsPos);
             });

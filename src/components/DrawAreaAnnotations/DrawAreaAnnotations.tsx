@@ -3,7 +3,7 @@ import useImage from "use-image";
 import { Stage, Layer, Rect, Image, Text, Label, Tag } from "react-konva";
 import MainArea from "../MainArea/MainArea";
 
-const DrawAnnotations = (props: any) => {
+const DrawAreaAnnotations = (props: any) => {
   const { Imgurl } = props;
   const [annotations, setAnnotations]: any = useState([]);
   const [newAnnotation, setNewAnnotation]: any = useState([]);
@@ -15,12 +15,10 @@ const DrawAnnotations = (props: any) => {
   const [active, setActive] = useState(true);
 
   const handleMouseDown = (event: any) => {
-    if (active === true) {
-      if (newAnnotation.length === 0) {
-        setlabel(false);
-        const { x, y } = event.target.getStage().getPointerPosition();
-        setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
-      }
+    if (newAnnotation.length === 0) {
+      setlabel(false);
+      const { x, y } = event.target.getStage().getPointerPosition();
+      setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
     }
   };
 
@@ -40,9 +38,11 @@ const DrawAnnotations = (props: any) => {
       annotations.push(annotationToAdd);
       setNewAnnotation([]);
       setAnnotations(annotations);
-      setActive(false);
     }
   };
+  useEffect(() => {
+    if (annotations) props.data([...annotations, ...newAnnotation]);
+  }, [annotations, newAnnotation]);
 
   const handleMouseMove = (event: any) => {
     if (newAnnotation.length === 1) {
@@ -76,20 +76,6 @@ const DrawAnnotations = (props: any) => {
         <Layer>
           <Image image={image} width={800} height={600} />
 
-          {label === true && (
-            <Label x={270} y={270}>
-              <Tag fill="black" cornerRadius={9} />
-              <Text
-                padding={14}
-                align="center"
-                fontSize={14}
-                width={280}
-                fill="white"
-                text="Click and drag to select the floor coverage area"
-                wrap="true"
-              />
-            </Label>
-          )}
           {annotationsToDraw &&
             annotationsToDraw.map((rect, i) => {
               return (
@@ -114,4 +100,4 @@ const DrawAnnotations = (props: any) => {
   );
 };
 
-export default DrawAnnotations;
+export default DrawAreaAnnotations;

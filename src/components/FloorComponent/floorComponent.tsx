@@ -23,6 +23,7 @@ import {
   UploadInnerContainer,
 } from "./styles";
 import DrawAnnotations from "../DrawAnnotations/drawAnnotations";
+import DrawAreaAnnotations from "../DrawAreaAnnotations/DrawAreaAnnotations";
 import FloorArea from "../FloorArea/floorArea";
 
 const { Panel } = Collapse;
@@ -33,6 +34,7 @@ const FloorComponent = () => {
   const [localData, setLocalData] = useState([]);
   const [imgname, setImgname] = useState();
   const [enabled, setenabled] = useState("disabled");
+  const [firststage, setFriststage]: any = useState(true);
   const data = (d: any) => {
     setLocalData(d);
     // console.log("sajid", d);
@@ -58,12 +60,17 @@ const FloorComponent = () => {
     });
   };
 
+  const MainAreaSubmit = () => {
+    console.log("sumbitted");
+    setFriststage(false);
+  };
+
   return (
     <Collapse
       onChange={onPanelChange}
       className="collapse-menu"
       collapsible="header"
-      //defaultActiveKey={["1"]}
+      defaultActiveKey={["1"]}
       // collapsible
     >
       <Panel
@@ -131,7 +138,7 @@ const FloorComponent = () => {
               icon={<SyncOutlined />}
             />
 
-            <Button shape="round" type="primary">
+            <Button shape="round" type="primary" onClick={MainAreaSubmit}>
               Submit
             </Button>
           </Space>,
@@ -156,12 +163,22 @@ const FloorComponent = () => {
           </ImageContainer>
         )}
 
-        {url !== null && (
+        {url !== null && firststage && (
           //<Image width={800} height={600} src={url} preview={false} />
+
           <Space>
-            <DrawAnnotations data={(d: any) => data(d)} Imgurl={url} />
+            <DrawAnnotations Imgurl={url} />
           </Space>
         )}
+
+        {url !== null && !firststage && (
+          //<Image width={800} height={600} src={url} preview={false} />
+
+          <Space>
+            <DrawAreaAnnotations data={(d: any) => data(d)} Imgurl={url} />
+          </Space>
+        )}
+
         <BottomButtonContainer>
           <Row justify="end" gutter={24}>
             <Space size={20}>
@@ -179,12 +196,12 @@ const FloorComponent = () => {
             </Space>
           </Row>
         </BottomButtonContainer>
-        {/* 
+
         {localData?.map((item) => (
           <>
             <FloorArea data={item} />
           </>
-        ))} */}
+        ))}
       </Panel>
     </Collapse>
   );
