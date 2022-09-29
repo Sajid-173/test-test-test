@@ -6,7 +6,11 @@ const MainContainer = styled(Space)`
   padding: 48px 96px;
 
   & .ant-collapse-arrow {
-    margin-top: 10px;
+    margin-top: 6px;
+  }
+
+  & .ant-collapse-header {
+    align-items: center !important;
   }
 `;
 
@@ -52,9 +56,10 @@ const BottomButtonContainer = styled(Space)`
 `;
 
 const FormRow = styled(Row)`
-  & .ant-col {
+  /* align-items: center; */
+  /* & .ant-col {
     height: 34px;
-  }
+  } */
 
   & .dimension-input {
     border-radius: 4px;
