@@ -247,20 +247,36 @@ const DrawAnnotations = (props: any) => {
   const [Newimage] = useImage(Imgurl);
 
   const [label, setlabel] = useState(true);
-  const [drawActive, setDrawActive] = useState(true);
+  const [drawActive, setDrawActive] = useState(false);
 
   const [rectangles, setRectangles] = React.useState(annotations);
   const [selectedId, selectShape] = React.useState(null);
 
+  const [recActive, setRecActive] = useState([10, 10]);
+
   //state to disable drawing after the inital drawing has been drawn
   const [active, setActive] = useState(true);
+  useEffect(() => {
+    console.log(drawActive);
+  }, [drawActive]);
 
   const handleMouseDown = (event: any) => {
     const empty = (event.target == event.target) === event.target.getStage();
     if (empty || event.target.attrs.image) {
       selectShape(null);
-      setDrawActive(true);
+      //setDrawActive(false);
+      // setRecActive([10, 10]);
     }
+    // const notempty = event.target.getStage().getPointerPosition();
+    // if (
+    //   notempty.x > 150 &&
+    //   notempty.x < 450 + 150 &&
+    //   notempty.y > 150 &&
+    //   notempty.y < 350 + 150
+    // ) {
+    //   selectShape(null);
+    // }
+
     if (drawActive === true) {
       if (newAnnotation.length === 0) {
         setlabel(false);
@@ -288,16 +304,35 @@ const DrawAnnotations = (props: any) => {
         setNewAnnotation([]);
         setAnnotations(annotations);
         setActive(false);
+        console.log(annotationToAdd);
       }
     }
   };
 
   const handleMouseMove = (event: any) => {
+    const empty = (event.target == event.target) === event.target.getStage();
+    if (empty || event.target.attrs.image) {
+      // selectShape(null);
+      setDrawActive(false);
+      setRecActive([10, 10]);
+    }
+    const notempty = event.target.getStage().getPointerPosition();
+    if (
+      notempty.x > 151 &&
+      notempty.x < 450 + 149 &&
+      notempty.y > 151 &&
+      notempty.y < 350 + 149 &&
+      !selectedId
+    ) {
+      setDrawActive(true);
+      setRecActive([0, 0]);
+    }
     if (drawActive === true) {
       if (newAnnotation.length === 1) {
         const sx = newAnnotation[0].x;
         const sy = newAnnotation[0].y;
         const { x, y } = event.target.getStage().getPointerPosition();
+
         setNewAnnotation([
           {
             x: sx,
@@ -348,13 +383,15 @@ const DrawAnnotations = (props: any) => {
             //style={{ width: Mwidth, height: Mheight }}
           />
 
-          {/* <Rect
-            fill="rgba(0,0,0,0.1)"
+          <Rect
+            stroke={"black"}
+            strokeWidth={3}
+            dash={recActive}
             x={150}
             y={150}
             width={450}
             height={350}
-          /> */}
+          />
           {label === true && (
             <Label x={270} y={270}>
               <Tag fill="black" cornerRadius={9} />
@@ -482,8 +519,8 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
         onClick={onSelect}
         onTap={onSelect}
         ref={shapeRef}
-        {...shapeProps}
         draggable
+        {...shapeProps}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,
