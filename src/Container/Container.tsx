@@ -318,10 +318,10 @@ const DrawAnnotations = (props: any) => {
     }
     const notempty = event.target.getStage().getPointerPosition();
     if (
-      notempty.x > 151 &&
-      notempty.x < 450 + 149 &&
-      notempty.y > 151 &&
-      notempty.y < 350 + 149 &&
+      notempty.x > 149 &&
+      notempty.x < 450 + 151 &&
+      notempty.y > 149 &&
+      notempty.y < 350 + 151 &&
       !selectedId
     ) {
       setDrawActive(true);
@@ -385,7 +385,7 @@ const DrawAnnotations = (props: any) => {
 
           <Rect
             stroke={"black"}
-            strokeWidth={3}
+            strokeWidth={1}
             dash={recActive}
             x={150}
             y={150}
@@ -398,7 +398,7 @@ const DrawAnnotations = (props: any) => {
               <Text
                 padding={14}
                 align="center"
-                fontSize={14}
+                fontSize={24}
                 width={280}
                 fill="white"
                 text="Click and drag to select the floor coverage area"
@@ -441,6 +441,14 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
   const [cy, setCy] = useState(shapeProps.y);
   const [cwidth, setCwidth] = useState(shapeProps.width);
   const [cheight, setCheight] = useState(shapeProps.height);
+  const [rotatePosition, setRotatePosition] = useState({
+    x:
+      shapeProps.width > 0
+        ? shapeProps.x + shapeProps.width / 2 - 25
+        : shapeProps.x + shapeProps.width / 2 - 25,
+    y: shapeProps.height > 0 ? shapeProps.y : shapeProps.y + shapeProps.height,
+  });
+  const [rotateAngle, setRotateAngle] = useState(0);
 
   //gets the corner of the shape
   function getCorner(
@@ -468,14 +476,16 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
 
     const p1 = getCorner(x, y, 0, 0, rad);
     const p2 = getCorner(x, y, width, 0, rad);
+    const p2a = getCorner(x, y, width / 2 - 25, 0, rad);
     const p3 = getCorner(x, y, width, height, rad);
     const p4 = getCorner(x, y, 0, height, rad);
-
+    setRotatePosition(p2a);
+    setRotateAngle(rad * (180 / 3.1416));
     const minX = Math.min(p1.x, p2.x, p3.x, p4.x);
     const minY = Math.min(p1.y, p2.y, p3.y, p4.y);
     const maxX = Math.max(p1.x, p2.x, p3.x, p4.x);
     const maxY = Math.max(p1.y, p2.y, p3.y, p4.y);
-
+    console.log(rotatePosition.x);
     return {
       x: minX,
       y: minY,
@@ -515,6 +525,7 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
     <React.Fragment>
       <Rect
         stroke="red"
+        strokeWidth={1}
         fill="rgba(245, 39, 39, 0.55)"
         onClick={onSelect}
         onTap={onSelect}
@@ -619,46 +630,19 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
             }}
           />
           <Label
-            x={
-              shapeProps.width > 0 ? cx + cwidth / 2 - 25 : cx + cwidth / 2 - 25
-            }
-            y={shapeProps.height > 0 ? cy : cy + cheight}
-            onDragMove={() => {
-              const boxes = trRef.current
-                .nodes()
-                .map((node: any) => node.getClientRect());
-              const box = getTotalBox(boxes);
-
-              trRef.current.nodes().forEach((shape: any) => {
-                const absPos = shape.getAbsolutePosition();
-
-                // where are shapes inside bounding box of all shapes?
-
-                const offsetX = box.x - absPos.x;
-
-                const offsetY = box.y - absPos.y;
-
-                // when total box goes outside of viewport, we need to move absolute position of shape
-                const newAbsPos = { ...absPos };
-                if (box.x < 0) {
-                  newAbsPos.x = -offsetX;
-                  // newAbsPos.x = -offsetX + MainRect.x;
-                }
-                if (box.y < 0) {
-                  newAbsPos.y = -offsetY;
-                  // newAbsPos.y = -offsetY + MainRect.y;
-                }
-                if (box.x + box.width > 1000 - box.width / 2) {
-                  newAbsPos.x = 1000 - box.width - offsetX;
-                  // newAbsPos.x = MainRect.width+MainRect.x - box.width - offsetX;
-                }
-                if (box.y + box.height > 600 - box.height / 2) {
-                  newAbsPos.y = 600 - box.height - offsetY;
-                  // newAbsPos.y = MainRect.height+MainRect.y - box.height - offsetY;
-                }
-                shape.setAbsolutePosition(newAbsPos);
-              });
-            }}
+            // x={
+            //   shapeProps.width > 0
+            //     ? shapeProps.x + shapeProps.width / 2 - 25
+            //     : shapeProps.x + shapeProps.width / 2 - 25
+            // }
+            // y={
+            // shapeProps.height > 0
+            //   ? shapeProps.y
+            //   : shapeProps.y + shapeProps.height
+            // }
+            x={rotatePosition?.x}
+            y={rotatePosition?.y}
+            rotation={rotateAngle}
           >
             <Text
               fontStyle="bold"
@@ -666,11 +650,15 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
               fontSize={22}
               padding={6}
               text="feet"
-            />
+            ></Text>
           </Label>
           <Label
-            x={shapeProps.width > 0 ? cx + 34 : cx + cwidth + 34}
-            y={cy + cheight / 2 - 25}
+            x={
+              shapeProps.width > 0
+                ? shapeProps.x
+                : shapeProps.x + shapeProps.width
+            }
+            y={shapeProps.y + shapeProps.height / 2 - 25}
             rotation={90}
           >
             <Text
@@ -679,7 +667,7 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
               fontSize={22}
               padding={6}
               text="feet"
-            />
+            ></Text>
           </Label>
         </>
       )}
