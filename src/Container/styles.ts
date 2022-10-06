@@ -99,7 +99,9 @@ const FormContainer = styled(Form)`
   align-items: center;
 `;
 
-export { BottomFormContainer, FormContainer };
+const Stagespace = styled(Space)``;
+
+export { BottomFormContainer, FormContainer, Stagespace };
 
 export { ImageContainer, BottomButtonContainer, FormRow, UploadInnerContainer };
 
