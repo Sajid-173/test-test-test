@@ -40,9 +40,153 @@ import {
   BottomFormContainer,
   FormContainer,
 } from "./styles";
+import { SymbolFlags } from "typescript";
 const { Panel } = Collapse;
 const { Option } = Select;
 
+/////////////Main Container for everything
+const Container = () => {
+  const addFloor = (values: any) => {
+    //adds new floors to the page
+    console.log(values);
+  };
+  const [form] = Form.useForm();
+
+  const onFinish = (values: any) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const [iwidth, setIwidth] = useState(false);
+  const [iheight, setIheight] = useState(false);
+  const [hrules, setHrules] = useState({
+    required: false,
+    message: "",
+  });
+  const [wrules, setWrules] = useState({
+    required: false,
+    message: "",
+  });
+  return (
+    //the entire container of the page
+    <MainContainer direction="vertical">
+      {/* Top level button for adding new floor */}
+
+      <Form
+        form={form}
+        name="dynamic_form_nest_item"
+        autoComplete="off"
+        initialValues={{ fields: [""] }}
+        onFinish={addFloor}
+      >
+        <Form.List name="fields">
+          {(fields, { add, remove }) => (
+            <>
+              <Row justify="end">
+                <Button
+                  shape="round"
+                  type="link"
+                  icon={<PlusCircleOutlined />}
+                  onClick={() => add()}
+                >
+                  Add new floor plan
+                </Button>
+              </Row>
+
+              {fields.reverse().map((field) => (
+                <Form.Item {...field} key={field.key}>
+                  <FloorComponent />
+                </Form.Item>
+              ))}
+            </>
+          )}
+        </Form.List>
+      </Form>
+
+      {/* container for the 2 buttons at the bottom */}
+
+      <Row justify="end" gutter={24}>
+        <Col>
+          <Popconfirm
+            placement="top"
+            title="Are you sure you want to cancel?"
+            //onConfirm={confirm}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button shape="round" type="primary">
+              Cancel
+            </Button>
+          </Popconfirm>
+        </Col>
+        <Col>
+          <Button
+            shape="round"
+            // disabled
+            type="primary"
+            onClick={() => form.submit()}
+          >
+            Next: Device Detail
+          </Button>
+        </Col>
+      </Row>
+
+      <Form
+        name="basic"
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 4 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <Form.Item label="Height" name="height" rules={[hrules]}>
+          <Input
+            onBlur={() => setWrules({ required: false, message: "" })}
+            onSelect={() => {
+              setHrules({ required: true, message: "please Input height!" });
+              setWrules({ required: false, message: "" });
+            }}
+            onChange={(e: any) => {
+              if (e.target.value.length > 0) {
+                setIwidth(true);
+              } else {
+                setIwidth(false);
+              }
+            }}
+            disabled={iheight}
+          />
+        </Form.Item>
+
+        <Form.Item label="Width" name="width" rules={[wrules]}>
+          <Input
+            onSelect={() => {
+              setWrules({ required: true, message: "please input width!" });
+              setHrules({ required: false, message: "" });
+            }}
+            onChange={(e: any) => {
+              if (e.target.value.length > 0) {
+                setIheight(true);
+              } else {
+                setIheight(false);
+              }
+            }}
+            disabled={iwidth}
+          />
+        </Form.Item>
+
+        <Form.Item wrapperCol={{ offset: 4, span: 4 }}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </MainContainer>
+  );
+};
 //Floor Plan component where the floor is made
 const FloorComponent = () => {
   const [url, setUrl] = useState<any>(null);
@@ -129,21 +273,11 @@ const FloorComponent = () => {
         header={
           <FormRow align="middle" gutter={140}>
             <Col>
-              <Typography.Text>Floor Name :</Typography.Text>
-              <Typography.Text strong> floor_1</Typography.Text>
+              <Typography.Text>Floor name</Typography.Text>
             </Col>
             <Col style={{ display: "flex", gap: "8px" }}>
-              <Typography.Text>FloorArea: </Typography.Text>
-
-              <Typography.Text>value(L)</Typography.Text>
-
-              <Typography.Text>x</Typography.Text>
-
-              <Typography.Text>value(W)</Typography.Text>
-
-              <Typography.Text>=</Typography.Text>
-
-              <Typography.Text strong>totalArea sq</Typography.Text>
+              {/* <Input onSelect={() => setIheight(true)} placeholder="Width" />
+             <Input onSelect={() => setIwidth(true)} placeholder="Height" /> */}
             </Col>
           </FormRow>
         }
@@ -200,7 +334,6 @@ const FloorComponent = () => {
           //<Image width={800} height={600} src={url} preview={false} />
 
           <Space>
-            {" "}
             <DrawAnnotations
               Imgurl={url}
               rotate={rotate}
@@ -254,6 +387,8 @@ const DrawAnnotations = (props: any) => {
 
   const [recActive, setRecActive] = useState([10, 10]);
 
+  const [labelin, setLabelin] = useState(false);
+
   //state to disable drawing after the inital drawing has been drawn
   const [active, setActive] = useState(true);
   useEffect(() => {
@@ -292,21 +427,47 @@ const DrawAnnotations = (props: any) => {
         const sx = newAnnotation[0].x;
         const sy = newAnnotation[0].y;
         const { x, y } = event.target.getStage().getPointerPosition();
+        let nx, ny;
+
+        if (x - sx < 0 && y - sy < 0) {
+          nx = sx - (x + sx);
+          ny = sy - (y + sy);
+
+          console.log("negative width and height");
+        } else if (x - sx < 0 && y - sy > 0) {
+          nx = sx - (x + sx);
+          ny = sy;
+          console.log("negative width");
+        } else if (x - sx > 0 && y - sy < 0) {
+          nx = sx;
+          ny = sy - (y + sy);
+          console.log("negative height");
+        } else {
+          console.log("positive height and width");
+          nx = sx;
+          ny = sy;
+        }
+
         const annotationToAdd: any = {
-          x: sx,
-          y: sy,
-          width: Math.trunc(x - sx),
-          height: Math.trunc(y - sy),
+          x: Math.abs(nx),
+          y: Math.abs(ny),
+          width: Math.abs(x - sx),
+          height: Math.abs(y - sy),
           key: annotations.length + 1,
           name: `Area ${annotations.length + 1}`,
         };
+        if (Math.abs(nx) < 175 || Math.abs(ny) < 175) {
+          setLabelin(true);
+        }
         annotations.push(annotationToAdd);
+
         setNewAnnotation([]);
         setAnnotations(annotations);
         setActive(false);
         console.log(annotationToAdd);
       }
     }
+    console.log(annotations);
   };
 
   const handleMouseMove = (event: any) => {
@@ -318,10 +479,10 @@ const DrawAnnotations = (props: any) => {
     }
     const notempty = event.target.getStage().getPointerPosition();
     if (
-      notempty.x > 149 &&
-      notempty.x < 450 + 151 &&
-      notempty.y > 149 &&
-      notempty.y < 350 + 151 &&
+      notempty.x < 450 &&
+      notempty.x > 450 - 300 &&
+      notempty.y < 450 &&
+      notempty.y > 450 - 300 &&
       !selectedId
     ) {
       setDrawActive(true);
@@ -339,11 +500,7 @@ const DrawAnnotations = (props: any) => {
             y: sy,
             width: Math.trunc(x - sx),
             height: Math.trunc(y - sy),
-            //feet formula and meter formulas
-            ftw: Math.trunc(x - sx) / 100,
-            fth: Math.trunc(y - sy) / 100,
-            mw: Math.trunc(x - sx) / 3779.52756,
-            mh: Math.trunc(y - sy) / 3779.52756,
+
             key: "0",
             name: "",
           },
@@ -387,10 +544,10 @@ const DrawAnnotations = (props: any) => {
             stroke={"black"}
             strokeWidth={1}
             dash={recActive}
-            x={150}
-            y={150}
-            width={450}
-            height={350}
+            x={450}
+            y={450}
+            width={-300}
+            height={-300}
           />
           {label === true && (
             <Label x={270} y={270}>
@@ -412,6 +569,7 @@ const DrawAnnotations = (props: any) => {
                 <MainArea
                   key={i}
                   shapeProps={rect}
+                  labelin={labelin}
                   isSelected={rect.key === selectedId}
                   onSelect={() => {
                     selectShape(rect.key);
@@ -431,7 +589,13 @@ const DrawAnnotations = (props: any) => {
   );
 };
 //Component used for the drawing of the first area
-const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
+const MainArea = ({
+  shapeProps,
+  isSelected,
+  onSelect,
+  onChange,
+  labelin,
+}: any) => {
   //reference to the shape
   const shapeRef: any = useRef();
   //reference to the transformed shape
@@ -569,6 +733,7 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
             ref={trRef}
             boundBoxFunc={(oldBox, newBox) => {
               const box = getClientRect(newBox);
+
               setCwidth(newBox.width < 10 ? shapeProps.width : newBox.width);
               setCheight(
                 newBox.height < 10 ? shapeProps.height : newBox.height
@@ -630,43 +795,51 @@ const MainArea = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
             }}
           />
           <Label
-            // x={
-            //   shapeProps.width > 0
-            //     ? shapeProps.x + shapeProps.width / 2 - 25
-            //     : shapeProps.x + shapeProps.width / 2 - 25
-            // }
-            // y={
-            // shapeProps.height > 0
-            //   ? shapeProps.y
-            //   : shapeProps.y + shapeProps.height
-            // }
-            x={rotatePosition?.x}
-            y={rotatePosition?.y}
-            rotation={rotateAngle}
+            x={shapeProps.x + shapeProps.width / 2 - 25}
+            y={labelin ? shapeProps.y : shapeProps.y - 25}
           >
+            <Tag fill="black"></Tag>
             <Text
               fontStyle="bold"
               fill="white"
-              fontSize={22}
+              fontSize={16}
               padding={6}
               text="feet"
+              align="center"
+              width={50}
+              height={25}
             ></Text>
           </Label>
           <Label
-            x={
-              shapeProps.width > 0
-                ? shapeProps.x
-                : shapeProps.x + shapeProps.width
-            }
+            x={labelin ? shapeProps.x + 25 : shapeProps.x}
             y={shapeProps.y + shapeProps.height / 2 - 25}
             rotation={90}
+            width={50}
+            height={30}
+          >
+            <Tag fill="black"></Tag>
+            <Text
+              fontStyle="bold"
+              fill="white"
+              fontSize={16}
+              padding={6}
+              text="feet"
+              align="center"
+              width={50}
+              height={25}
+            ></Text>
+          </Label>
+
+          <Label
+            x={shapeProps.x + shapeProps.width / 2 - 25}
+            y={shapeProps.y + shapeProps.height / 2 - 12.5}
           >
             <Text
               fontStyle="bold"
               fill="white"
-              fontSize={22}
+              fontSize={cwidth < 100 ? 12 : 44}
               padding={6}
-              text="feet"
+              text="Area 1"
             ></Text>
           </Label>
         </>
@@ -726,77 +899,5 @@ const FloorArea = (props: any) => {
     </BottomFormContainer>
   );
 };
-/////////////Main Container for everything
-const Container = () => {
-  const addFloor = (values: any) => {
-    //adds new floors to the page
-    console.log(values);
-  };
-  const [form] = Form.useForm();
-  return (
-    //the entire container of the page
-    <MainContainer direction="vertical">
-      {/* Top level button for adding new floor */}
 
-      <Form
-        form={form}
-        name="dynamic_form_nest_item"
-        autoComplete="off"
-        initialValues={{ fields: [""] }}
-        onFinish={addFloor}
-      >
-        <Form.List name="fields">
-          {(fields, { add, remove }) => (
-            <>
-              <Row justify="end">
-                <Button
-                  shape="round"
-                  type="link"
-                  icon={<PlusCircleOutlined />}
-                  onClick={() => add()}
-                >
-                  Add new floor plan
-                </Button>
-              </Row>
-
-              {fields.reverse().map((field) => (
-                <Form.Item {...field} key={field.key}>
-                  <FloorComponent />
-                </Form.Item>
-              ))}
-            </>
-          )}
-        </Form.List>
-      </Form>
-
-      {/* container for the 2 buttons at the bottom */}
-
-      <Row justify="end" gutter={24}>
-        <Col>
-          <Popconfirm
-            placement="top"
-            title="Are you sure you want to cancel?"
-            //onConfirm={confirm}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button shape="round" type="primary">
-              Cancel
-            </Button>
-          </Popconfirm>
-        </Col>
-        <Col>
-          <Button
-            shape="round"
-            // disabled
-            type="primary"
-            onClick={() => form.submit()}
-          >
-            Next: Device Detail
-          </Button>
-        </Col>
-      </Row>
-    </MainContainer>
-  );
-};
 export default Container;
