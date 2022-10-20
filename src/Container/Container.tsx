@@ -11,6 +11,7 @@ import {
   Typography,
   Input,
   Select,
+  Tooltip,
 } from "antd";
 import {
   Stage,
@@ -40,7 +41,7 @@ import {
   BottomFormContainer,
   FormContainer,
 } from "./styles";
-import { SymbolFlags } from "typescript";
+
 const { Panel } = Collapse;
 const { Option } = Select;
 
@@ -192,8 +193,7 @@ const FloorComponent = () => {
   const [url, setUrl] = useState<any>(null);
   const [localData, setLocalData] = useState([]);
   const [imgname, setImgname] = useState();
-  const [enabled, setenabled] = useState("disabled");
-  const [firststage, setFriststage]: any = useState(true);
+  const [inputPopup, setInputPopup] = useState(false);
 
   const data = (d: any) => {
     setLocalData(d);
@@ -273,7 +273,13 @@ const FloorComponent = () => {
         header={
           <FormRow align="middle" gutter={140}>
             <Col>
-              <Typography.Text>Floor name</Typography.Text>
+              <Tooltip
+                visible={inputPopup}
+                placement="topLeft"
+                title="Enter the floor Name"
+              >
+                <Typography.Text>Floor name</Typography.Text>
+              </Tooltip>
             </Col>
             <Col style={{ display: "flex", gap: "8px" }}>
               {/* <Input onSelect={() => setIheight(true)} placeholder="Width" />
@@ -341,6 +347,7 @@ const FloorComponent = () => {
               rotateY={rotateY}
               Mwidth={width}
               Mheight={height}
+              setInputPopup={setInputPopup}
             />
           </Space>
         )}
@@ -374,7 +381,7 @@ const FloorComponent = () => {
 };
 //Draw anootation for the first selection
 const DrawAnnotations = (props: any) => {
-  const { Imgurl, rotate, rotateX, rotateY, Mwidth, Mheight } = props;
+  const { Imgurl, rotate, rotateX, rotateY, setInputPopup } = props;
   const [annotations, setAnnotations]: any = useState([]);
   const [newAnnotation, setNewAnnotation]: any = useState([]);
   const [Newimage] = useImage(Imgurl);
@@ -388,6 +395,12 @@ const DrawAnnotations = (props: any) => {
   const [recActive, setRecActive] = useState([10, 10]);
 
   const [labelin, setLabelin] = useState(false);
+
+  const [stage, setStage] = useState({
+    scale: 1,
+    x: 0,
+    y: 0,
+  });
 
   //state to disable drawing after the inital drawing has been drawn
   const [active, setActive] = useState(true);
@@ -412,10 +425,22 @@ const DrawAnnotations = (props: any) => {
     //   selectShape(null);
     // }
 
+    // the function will return pointer position relative to the passed node
+    var transform = event.target.getStage().getAbsoluteTransform().copy();
+    // to detect relative position we need to invert transform
+    //transform.invert();
+
+    // get pointer (say mouse or touch) position
+    var pos = event.target.getStage().getStage().getPointerPosition();
+
+    // now we find relative point
+    const rpos = transform.point(pos);
+
     if (drawActive === true) {
       if (newAnnotation.length === 0) {
         setlabel(false);
-        const { x, y } = event.target.getStage().getPointerPosition();
+        //const { x, y } = event.target.getStage().getPointerPosition();
+        const { x, y } = rpos;
         setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
       }
     }
@@ -465,6 +490,7 @@ const DrawAnnotations = (props: any) => {
         setAnnotations(annotations);
         setActive(false);
         console.log(annotationToAdd);
+        setInputPopup(true);
       }
     }
     console.log(annotations);
@@ -474,7 +500,7 @@ const DrawAnnotations = (props: any) => {
     const empty = (event.target == event.target) === event.target.getStage();
     if (empty || event.target.attrs.image) {
       // selectShape(null);
-      setDrawActive(false);
+      //setDrawActive(false);
       setRecActive([10, 10]);
     }
     const notempty = event.target.getStage().getPointerPosition();
@@ -509,6 +535,35 @@ const DrawAnnotations = (props: any) => {
     }
   };
 
+  const handleWheel = (e: any) => {
+    e.evt.preventDefault();
+
+    const scaleBy = 1.02;
+    const stage = e.target.getStage();
+    const oldScale = stage.scaleX();
+    const mousePointTo = {
+      x: stage.getPointerPosition().x / oldScale - stage.x() / oldScale,
+      y: stage.getPointerPosition().y / oldScale - stage.y() / oldScale,
+    };
+
+    let newScale = e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    if (newScale < 1) {
+      setStage({
+        scale: 1,
+        x: 0,
+        y: 0,
+      });
+    } else {
+      setStage({
+        scale: newScale,
+        x:
+          (stage.getPointerPosition().x / newScale - mousePointTo.x) * newScale,
+        y:
+          (stage.getPointerPosition().y / newScale - mousePointTo.y) * newScale,
+      });
+    }
+  };
+
   const annotationsToDraw = [...annotations, ...newAnnotation];
   // console.log(annotationsToDraw[0]);
   return (
@@ -517,12 +572,17 @@ const DrawAnnotations = (props: any) => {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
+        onWheel={handleWheel}
         width={Newimage && Newimage.width < 1000 ? Newimage?.width : 1000}
         height={
           Newimage && Newimage?.height * (1000 / Newimage?.width) < 600
             ? Newimage?.height * (1000 / Newimage?.width)
             : 600
         }
+        x={stage.x}
+        y={stage.y}
+        scaleX={stage.scale}
+        scaleY={stage.scale}
       >
         <Layer>
           <Image
@@ -756,9 +816,9 @@ const MainArea = ({
               return newBox;
             }}
             onDragMove={() => {
-              const boxes = trRef.current
-                .nodes()
-                .map((node: any) => node.getClientRect());
+              const boxes = trRef.current.nodes().map((node: any) => {
+                node.getClientRect();
+              });
               const box = getTotalBox(boxes);
 
               trRef.current.nodes().forEach((shape: any) => {
